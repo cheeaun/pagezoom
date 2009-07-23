@@ -85,6 +85,7 @@ var PageZoom = new Class({
 					
 					html.setStyles({
 						width: windowSize.x * ((Browser.Engine.gecko) ? 1 : scale),
+						height: (Browser.Engine.gecko) ? '' : windowSize.y * scale,
 						overflow: 'hidden',
 						'transform-origin': origin,
 						'transform': 'scale(' + scale + ',' + scale +')',
