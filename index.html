@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<title>PageZoom</title>
+<link rel="stylesheet" href="http://github.com/cheeaun/cacss/raw/master/ca.css">
+<script src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.3/mootools-yui-compressed.js"></script>
+<script src="PageZoom.js"></script>
+<script>
+window.addEvent('domready', function(){
+	var pz = new PageZoom();
+	$('attach').addEvent('click', function(e){
+		e.stop();
+		pz.attach();
+	});
+	$('detach').addEvent('click', function(e){
+		e.stop();
+		pz.detach();
+	});
+});
+</script>
+<h1>PageZoom</h1>
+<p>A MooTools class to zoom in anything in a page. Works best in Firefox 3.5, Safari 4 and Chrome.</p>
+<h2>Demo</h2>
+<p>
+<button id="attach">Attach</button>
+<button id="detach">Detach</button>
+</p>
+<p><img src="quilt.jpg"></p>
+<p>Image from <a href="http://www.flickr.com/photos/qusic/3370510628/">Flickr</a>.</p>
+<h2>Known Issues</h2>
+<ul>
+<li>Won't work on IE.</li>
+<li>Preview can't work for <em>dynamic</em> content like Flash, animations, etc.</li>
+</ul>
+<h2>Source Code</h2>
+<p><a href="http://github.com/cheeaun/pagezoom">http://github.com/cheeaun/pagezoom</a></p>
