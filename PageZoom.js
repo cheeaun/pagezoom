@@ -100,7 +100,10 @@ var PageZoom = new Class({
 					window.addEvents({
 						resize: function(){
 							windowSize = window.getScrollSize();
-							html.setStyles('width', windowSize.x);
+							html.setStyles({
+								width: windowSize.x * ((Browser.Engine.gecko) ? 1 : scale),
+								height: (Browser.Engine.gecko) ? '' : windowSize.y * scale
+							});
 						},
 						mousemove: function(e){
 							var pos = e.page;
