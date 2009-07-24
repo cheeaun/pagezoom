@@ -38,7 +38,7 @@ var PageZoom = new Class({
 				'-moz-border-radius': '10px',
 				'-webkit-border-radius': '10px',
 				padding: 10,
-				backgroundColor: (Browser.Engine.trident) ? '#aaa' : 'rgba(0,0,0,0.5)'
+				backgroundColor: (Browser.Engine.trident) ? '#aaa' : 'rgba(0,0,0,0.5)' // IE complaints about some invalid value.
 			}
 		});
 		
@@ -63,7 +63,7 @@ var PageZoom = new Class({
 		});
 		
 		this.iframe = new IFrame({
-			src: document.location.href + '?',
+			src: document.location.href + '?', // Question mark character, so that page appears in iframe.
 			styles: {
 				width: '100%',
 				height: '100%',
@@ -73,7 +73,7 @@ var PageZoom = new Class({
 			events: {
 				load: function(){
 					var win = this.contentWindow;
-					var html = $(win.document.html)
+					var html = $(win.document.html);
 					var margins = {
 						x: self.options.width/2/(self.options.scale-1),
 						y: self.options.height/2/(self.options.scale-1)
@@ -120,6 +120,7 @@ var PageZoom = new Class({
 					
 					win.addEvents({
 						mouseenter: function(){
+							// Some tricks to make sure there's no chance for cursor to hover over the preview, in Firefox
 							self.container.setStyles({
 								left: '-100%',
 								top: '-100%'
