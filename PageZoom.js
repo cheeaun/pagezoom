@@ -26,6 +26,7 @@ var PageZoom = new Class({
 	
 	render: function(){
 		var self = this;
+		var scale = self.options.scale;
 		
 		var container = this.container = new Element('div', {
 			styles: {
@@ -38,7 +39,7 @@ var PageZoom = new Class({
 				'-moz-border-radius': '10px',
 				'-webkit-border-radius': '10px',
 				padding: 10,
-				backgroundColor: (Browser.Engine.trident) ? '#aaa' : 'rgba(0,0,0,0.5)' // IE complaints about some invalid value.
+				backgroundColor: (Browser.Engine.trident) ? '#aaa' : 'rgba(0,0,0,0.5)' // IE complains about some invalid value.
 			}
 		});
 		
@@ -70,55 +71,76 @@ var PageZoom = new Class({
 				border: 0,
 				backgroundColor: '#fff'
 			},
+			frameBorder: 0,
 			events: {
 				load: function(){
 					var win = this.contentWindow;
-					var html = $(win.document.html);
+					var body = (Browser.Engine.trident) ? $(win.document.body) : $(win.document.html);
 					var margins = {
-						x: self.options.width/2/(self.options.scale-1),
-						y: self.options.height/2/(self.options.scale-1)
+						x: self.options.width/2/(scale-1),
+						y: self.options.height/2/(scale-1)
 					};
-					var origin = '-' + margins.x + 'px -' + margins.y + 'px';
 					var windowSize = window.getScrollSize();
 					var ifrSize = container.getSize();
-					var scale = self.options.scale;
 					
-					html.setStyles({
+					body.setStyles({
 						width: windowSize.x * ((Browser.Engine.gecko) ? 1 : scale),
 						height: (Browser.Engine.gecko) ? '' : windowSize.y * scale,
-						overflow: 'hidden',
-						'transform-origin': origin,
-						'transform': 'scale(' + scale + ',' + scale +')',
-						'-moz-transform-origin': origin,
-						'-moz-transform': 'scale(' + scale + ',' + scale +')',
-						'-webkit-transform-origin': origin,
-						'-webkit-transform': 'scale(' + scale + ',' + scale +')',
-						'padding-right': margins.x + html.getStyle('padding-right').toInt(),
-						'padding-bottom': margins.y + html.getStyle('padding-bottom').toInt()
+						overflow: 'hidden'
 					});
 					
-					window.addEvents({
-						resize: function(){
-							windowSize = window.getScrollSize();
-							html.setStyles({
-								width: windowSize.x * ((Browser.Engine.gecko) ? 1 : scale),
-								height: (Browser.Engine.gecko) ? '' : windowSize.y * scale
-							});
-						},
-						mousemove: function(e){
-							var pos = e.page;
-							var position = {
-								left: pos.x + 30,
-								top: pos.y + 30
-							}
-							if (pos.x > (windowSize.x-ifrSize.x-40)) position.left = pos.x-ifrSize.x-30;
-							if (pos.y > (windowSize.y-ifrSize.y-40)) position.top = pos.y-ifrSize.y-30;
-							container.setStyles(position);
-							win.scrollTo(scale * (pos.x), scale * (pos.y));
+					if (Browser.Engine.trident){
+						body.setStyles({
+							zoom: scale,
+							// Below is the IEWTF code.
+							position: 'absolute',
+							top: self.options.width/2/scale,
+							left: self.options.height/2/scale,
+							padding: body.getStyle('padding').split(' ').map(function(p){
+								// IE re-zooms in the zoomed paddings of the <body> element
+								// 2px padding -> 200% zoom = 8px, NOT 4px!
+								var val = p.toFloat();
+								return p.replace(val, val/scale);
+							}).join(' ')
+						});
+					} else {
+						var origin = '-' + margins.x + 'px -' + margins.y + 'px';
+						body.setStyles({
+							'transform-origin': origin,
+							'transform': 'scale(' + scale + ',' + scale +')',
+							'-moz-transform-origin': origin,
+							'-moz-transform': 'scale(' + scale + ',' + scale +')',
+							'-webkit-transform-origin': origin,
+							'-webkit-transform': 'scale(' + scale + ',' + scale +')',
+							'padding-right': margins.x + body.getStyle('padding-right').toInt(),
+							'padding-bottom': margins.y + body.getStyle('padding-bottom').toInt()
+						});
+					}
+					
+					window.addEvent('resize', function(){
+						windowSize = window.getScrollSize();
+						body.setStyles({
+							width: windowSize.x * ((Browser.Engine.gecko) ? 1 : scale),
+							height: (Browser.Engine.gecko) ? '' : windowSize.y * scale
+						});
+					});
+					
+					// IE freaks out when trying to 'unload'
+					if (Browser.Engine.trident) window.addEvent('unload', self.detach.bind(self));
+					
+					document.addEvent('mousemove', function(e){
+						var pos = e.page;
+						var position = {
+							left: pos.x + 30,
+							top: pos.y + 30
 						}
+						if (pos.x > (windowSize.x-ifrSize.x-40)) position.left = pos.x-ifrSize.x-30;
+						if (pos.y > (windowSize.y-ifrSize.y-40)) position.top = pos.y-ifrSize.y-30;
+						container.setStyles(position);
+						win.scrollTo(scale * (pos.x), scale * (pos.y));
 					});
 					
-					win.addEvents({
+					body.addEvents({
 						mouseenter: function(){
 							// Some tricks to make sure there's no chance for cursor to hover over the preview, in Firefox
 							self.container.setStyles({
