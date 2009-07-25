@@ -76,10 +76,6 @@ var PageZoom = new Class({
 				load: function(){
 					var win = this.contentWindow;
 					var body = (Browser.Engine.trident) ? $(win.document.body) : $(win.document.html);
-					var margins = {
-						x: self.options.width/2/(scale-1),
-						y: self.options.height/2/(scale-1)
-					};
 					var windowSize = window.getScrollSize();
 					var ifrSize = container.getSize();
 					
@@ -104,6 +100,10 @@ var PageZoom = new Class({
 							}).join(' ')
 						});
 					} else {
+						var margins = {
+							x: self.options.width/2/(scale-1),
+							y: self.options.height/2/(scale-1)
+						};
 						var origin = '-' + margins.x + 'px -' + margins.y + 'px';
 						body.setStyles({
 							'transform-origin': origin,
