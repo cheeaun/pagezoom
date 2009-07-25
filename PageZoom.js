@@ -112,8 +112,8 @@ var PageZoom = new Class({
 							'-moz-transform': 'scale(' + scale + ',' + scale +')',
 							'-webkit-transform-origin': origin,
 							'-webkit-transform': 'scale(' + scale + ',' + scale +')',
-							'padding-right': margins.x + body.getStyle('padding-right').toInt(),
-							'padding-bottom': margins.y + body.getStyle('padding-bottom').toInt()
+							'padding-right': self.options.width,
+							'padding-bottom': self.options.height
 						});
 					}
 					
