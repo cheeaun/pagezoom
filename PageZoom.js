@@ -148,12 +148,8 @@ var PageZoom = new Class({
 								top: '-100%'
 							});
 						},
-						mousedown: function(e){
-							e.stop();
-						},
-						click: function(e){
-							e.stop();
-						}
+						mousedown: Event.stop,
+						click: Event.stop
 					});
 				}
 			}
