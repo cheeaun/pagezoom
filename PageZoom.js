@@ -1,5 +1,5 @@
 /*
-Script: MooEditable.js
+Script: PageZoom.js
 	Class to zoom in anything in a page.
 
 License:
